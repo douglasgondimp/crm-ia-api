@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
@@ -29,21 +31,11 @@ class Contact extends Model
     /** @use HasFactory<ContactFactory> */
     use HasFactory, SoftDeletes, HasUuids;
 
-    /**
-     * Get the columns that should receive a unique identifier.
-     *
-     * @return array<int, string>
-     */
     public function uniqueIds(): array
     {
         return ['uuid'];
     }
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -52,23 +44,33 @@ class Contact extends Model
         ];
     }
 
-    /**
-     * Get the company that this contact belongs to.
-     *
-     * @return BelongsTo<Company, $this>
-     */
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
 
-    /**
-     * Get the user who created this contact.
-     *
-     * @return BelongsTo<User, $this>
-     */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function deals(): HasMany
+    {
+        return $this->hasMany(Deal::class);
+    }
+
+    public function activities(): HasMany
+    {
+        return $this->hasMany(Activity::class);
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(Note::class);
+    }
+
+    public function tags(): MorphToMany
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
     }
 }
