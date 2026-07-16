@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusLead;
 use Database\Factories\LeadFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -35,7 +36,7 @@ class Lead extends Model
     protected function casts(): array
     {
         return [
-            'score' => 'integer',
+            'score' => StatusLead::class,
         ];
     }
 
