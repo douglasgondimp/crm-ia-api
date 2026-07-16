@@ -1,0 +1,155 @@
+services:
+    api:
+        build:
+            context: ./api
+            dockerfile: Dockerfile
+            args:
+                user: laravel
+                uid: 1000
+        image: laravel-api
+        restart: unless-stopped
+        working_dir: /var/www
+        volumes:
+            - ./api:/var/www
+        networks:
+            - app_net
+        depends_on:
+            - db
+            - redis
+
+    nginx:
+        image: nginx:alpine
+        container_name: laravel_nginx
+        restart: unless-stopped
+        ports:
+            - "8000:80"
+        volumes:
+            - ./api:/var/www
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d
+        networks:
+            - app_net
+        depends_on:
+            - api
+
+    frontend:
+        build:
+            context: ./app
+            dockerfile: Dockerfile
+        container_name: vue_frontend
+        restart: unless-stopped
+        working_dir: /app
+        volumes:
+            - ./app:/app
+            - /app/node_modules
+        ports:
+            - "5173:5173"
+        networks:
+            - app_net
+        environment:
+            - VITE_API_URL=http://localhost:8000
+
+    db:
+        image: mysql:8.4
+        container_name: laravel_db
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USERNAME}
+        volumes:
+            - laravel_db_data:/var/lib/mysql
+        ports:
+            - "3306:3306"
+        networks:
+            - app_net
+        healthcheck:
+            test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+
+    redis:
+        image: redis:alpine
+        container_name: laravel_redis
+        restart: unless-stopped
+        networks:
+            - app_net
+        volumes:
+            - redis_data:/data
+        healthcheck:
+            test: [ "CMD", "redis-cli", "ping" ]
+            interval: 5s
+            timeout: 3s
+            retries: 5
+
+    phpmyadmin:
+        image: phpmyadmin:latest
+        container_name: laravel_phpmyadmin
+        restart: unless-stopped
+        environment:
+            PMA_HOST: db
+            PMA_PORT: 3306
+        ports:
+            - "8080:80"
+        networks:
+            - app_net
+        depends_on:
+            - db
+
+    queue:
+        image: laravel-api
+        container_name: laravel_queue
+        restart: unless-stopped
+        working_dir: /var/www
+        command: php artisan queue:work --tries=3 --sleep=3
+        volumes:
+            - ./api:/var/www
+        networks:
+            - app_net
+        depends_on:
+            api:
+                condition: service_started
+            db:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+
+    scheduler:
+        image: laravel-api
+        container_name: laravel_scheduler
+        restart: unless-stopped
+        working_dir: /var/www
+
+        command: >
+            sh -c "while true; do php artisan schedule:run; sleep 60; done"
+
+        volumes:
+            - ./api:/var/www
+
+        depends_on:
+            db:
+                condition: service_healthy
+
+        networks:
+            - app_net
+
+    mailpit:
+        image: axllent/mailpit
+        container_name: laravel_mailpit
+
+        ports:
+            - "1025:1025"
+            - "8025:8025"
+
+        networks:
+            - app_net
+
+networks:
+    app_net:
+        driver: bridge
+
+volumes:
+    laravel_db_data:
+        driver: local
+    redis_data:
