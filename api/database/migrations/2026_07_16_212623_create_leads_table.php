@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('company')->nullable();
             $table->string('source')->nullable();
-            $table->string('status')->default('new');
+            $table->string('status')->default("Novo");
             $table->integer('score')->default(0);
-            $table->string('temperature')->default('cold');
+            $table->string('temperature')->default("cold");
             $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');
             $table->text('observations')->nullable();
             $table->timestamps();
