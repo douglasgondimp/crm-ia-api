@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Testing\Fluent\Concerns\Has;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -180,10 +181,9 @@ class AuthTest extends TestCase
             'name' => $name,
             'email' => $email,
         ]);
-        $token = $user->createToken('test-token')->plainTextToken;
+        Sanctum::actingAs($user);
 
-        $response = $this->withToken($token)
-            ->getJson('/api/me');
+        $response = $this->getJson('/api/me');
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -215,7 +215,7 @@ class AuthTest extends TestCase
             'name' => fake()->name(),
             'email' => fake()->safeEmail(),
         ]);
-        $this->actingAs($user);
+        Sanctum::actingAs($user);
 
         $response = $this->putJson('/api/me', [
             'name' => $name,
@@ -248,7 +248,7 @@ class AuthTest extends TestCase
         $user = User::factory()->create([
             'password' => Hash::make('oldpassword123'),
         ]);
-        $this->actingAs($user);
+        Sanctum::actingAs($user);
 
         $response = $this->putJson('/api/me/password', [
             'current_password' => 'oldpassword123',
@@ -273,7 +273,7 @@ class AuthTest extends TestCase
         $user = User::factory()->create([
             'password' => Hash::make('oldpassword123'),
         ]);
-        $this->actingAs($user);
+        Sanctum::actingAs($user);
 
         $response = $this->putJson('/api/me/password', [
             'current_password' => 'wrongpassword',
