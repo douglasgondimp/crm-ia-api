@@ -22,4 +22,10 @@ Route::middleware('auth:sanctum')->group(function () {
         ->parameters([
             "companies" => "uuid"
         ]);
+
+    // Rotas de Contacts
+    Route::apiResource('contacts', \App\Http\Controllers\ContactController::class)
+        ->parameters([
+            "contacts" => "uuid"
+        ]);
 });
