@@ -28,4 +28,10 @@ Route::middleware('auth:sanctum')->group(function () {
         ->parameters([
             "contacts" => "uuid"
         ]);
+
+    // Rotas de Deals
+    Route::apiResource('deals', \App\Http\Controllers\DealController::class)
+        ->parameters([
+            "deals" => "uuid"
+        ]);
 });
