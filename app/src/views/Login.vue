@@ -1,5 +1,5 @@
 <template>
-    <div class="min-vh-100 d-flex align-items-center justify-content-center bg-gradient"
+    <div class="min-vh-100 d-flex align-items-center justify-content-center bg-gradient mx-auto"
         style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="card shadow-lg p-5" style="width: 100%; max-width: 420px;">
             <div class="text-center mb-4">
