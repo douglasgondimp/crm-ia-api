@@ -10,4 +10,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [\App\Http\Controllers\AuthController::class, 'me']);
     Route::put('/me', [\App\Http\Controllers\AuthController::class, 'updateProfile']);
     Route::put('/me/password', [\App\Http\Controllers\AuthController::class, 'updatePassword']);
+
+    // Rotas de Leads
+    Route::apiResource('leads', \App\Http\Controllers\LeadController::class)
+        ->parameters([
+            "leads" => "uuid"
+        ]);
+
+    // Rotas de Companies
+    Route::apiResource('companies', \App\Http\Controllers\CompanyController::class)
+        ->parameters([
+            "companies" => "uuid"
+        ]);
 });

@@ -23,7 +23,7 @@ class CompanyFactory extends Factory
             'uuid' => (string) Str::uuid(),
             'name' => fake()->company(),
             'trade_name' => fake()->company(),
-            'document' => fake()->unique()->cnpj(),
+            'document' => fake()->unique()->numerify('##############'),
             'email' => fake()->unique()->companyEmail(),
             'phone' => fake()->phoneNumber(),
             'website' => fake()->url(),
