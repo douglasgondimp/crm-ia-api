@@ -34,4 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->parameters([
             "deals" => "uuid"
         ]);
+
+    // Rotas de Activities
+    Route::apiResource('activities', \App\Http\Controllers\ActivityController::class);
 });
