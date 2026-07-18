@@ -17,9 +17,12 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        if (env("APP_ENV", "local") == "local") {
+            User::factory()->create([
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+                'password' => "password123"
+            ]);
+        }
     }
 }
