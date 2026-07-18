@@ -12,8 +12,8 @@ const router = createRouter({
     },
     {
       path: '/',
-      name: 'home',
-      component: () => import('@/views/Home.vue'),
+      name: 'dashboard',
+      component: () => import('@/views/Dashboard.vue'),
       meta: { requiresAuth: true }
     }
   ]
@@ -25,7 +25,7 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'login' })
   } else if (to.meta.guest && authStore.isAuthenticated) {
-    next({ name: 'home' })
+    next({ name: 'dashboard' })
   } else {
     next()
   }
