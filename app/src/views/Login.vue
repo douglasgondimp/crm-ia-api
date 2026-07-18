@@ -10,7 +10,7 @@
             <form @submit.prevent="handleSubmit">
                 <div class="mb-3">
                     <label for="email" class="form-label">E-mail</label>
-                    <InputText id="email" v-model="form.email" type="email" class="form-control border rounded-2 p-2"
+                    <InputText id="email" v-model="form.email" type="email" class="form-control"
                         placeholder="seu@email.com" :class="{ 'is-invalid': errors.email }" @blur="validateEmail" />
                     <div v-if="errors.email" class="invalid-feedback">
                         {{ errors.email }}
@@ -20,18 +20,13 @@
                 <div class="mb-3">
                     <label for="password" class="form-label">Senha</label>
 
-                    <IconField>
-                        <InputPassword id="password" v-model="form.password" class="form-control border rounded-2 p-2"
-                            placeholder="••••••••" :class="{ 'is-invalid': errors.password }" @blur="validatePassword"
-                            :mask="mask" />
-                        <InputIcon class="cursor-pointer" @click="mask = !mask">
-                            <Eye v-if="mask" />
-                            <EyeSlash v-else />
-                        </InputIcon>
-                        <div v-if="errors.password" class="invalid-feedback">
-                            {{ errors.password }}
-                        </div>
-                    </IconField>
+                    <div class="form-control p-0" :class="{ 'is-invalid': errors.password }">
+                        <Password id="password" v-model="form.password" :invalid="errors.password != null" fluid
+                            :feedback="false" placeholder="••••••••" @blur="validatePassword" :mask="mask" />
+                    </div>
+                    <div v-if="errors.password" class="invalid-feedback">
+                        {{ errors.password }}
+                    </div>
 
                 </div>
 
@@ -39,9 +34,7 @@
                     {{ authStore.error }}
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100 rounded-3"
-                    :disabled="authStore.loading">Entrar</button>
-                <!-- <Button type="submit" label="Entrar" :loading="authStore.loading" severity="success" /> -->
+                <Button type="submit" label="Entrar" :loading="authStore.loading" severity="success" />
             </form>
 
             <div class="mt-4 text-center">
@@ -59,11 +52,11 @@ import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import InputText from 'primevue/inputtext'
-import InputPassword from 'primevue/inputpassword'
+import Password from 'primevue/password';
 import Button from 'primevue/button'
 import { IconField, InputIcon } from 'primevue'
-import Eye from '@primeicons/vue/eye'
-import EyeSlash from '@primeicons/vue/eye-slash'
+// import Eye from '@primeicons/vue/eye'
+// import EyeSlash from '@primeicons/vue/eye-slash'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -124,14 +117,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.bg-gradient {
-    min-height: 100vh;
-}
-
 .cursor-pointer {
     position: absolute;
     inset-inline-end: 0 !important;
     right: -20px !important;
-    top: 11px;
+    top: 20px;
 }
 </style>
